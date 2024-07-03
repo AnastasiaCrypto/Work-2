@@ -1,0 +1,31 @@
+import requests
+import datetime
+
+# Get current date in the format required by the API
+current_date = datetime.date.today().isoformat()
+
+# API endpoint
+url = f"https://api.nasa.gov/neo/rest/v1/feed?start_date={current_date}&end_date={current_date}&api_key=your_api_key"
+
+# Make a GET request to the API
+response = requests.get(url)
+
+# Parse JSON response
+data = response.json()
+
+# Extract asteroid data
+asteroids = data['near_earth_objects'][current_date]
+
+# Initialize variables to store closest asteroid data
+closest_asteroid = None
+min_distance = float('inf')
+
+# Find the closest asteroid
+for asteroid in asteroids:
+    distance = asteroid['close_approach_data'][0]['miss_distance']['kilometers']
+    if distance < min_distance:
+        min_distance = distance
+        closest_asteroid = asteroid
+
+# Display closest asteroid information
+print(f"The closest asteroid to Earth today is {closest_asteroid['name']} with a distance of {min_distance} kilometers.")
